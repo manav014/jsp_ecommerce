@@ -45,7 +45,7 @@ String u="hello";
 
               <ul class="navbar-nav">
                      <li class="nav-item">
-                         <a class="nav-link" href="<% if(session.getAttribute("username")==null){out.print("login.jsp");}else if(u =="admin"){out.print("admin_profile.jsp");}else{out.print("profile.jsp");}%>">
+                         <a class="nav-link" href="<% if(session.getAttribute("username")==null){out.print("login.jsp");}else if(u.equals("admin")){out.print("admin_profile.jsp");}else{out.print("profile.jsp");}%>">
                              <img src="assets/log.png" width="30" height="30"/>
                          </a>
                      </li>

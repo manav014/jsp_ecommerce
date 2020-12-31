@@ -20,17 +20,9 @@
   </head>
    <body>
 <%@page import="java.sql.*"%>
+<%@ include file = "../backend/database_connection.jsp" %>
 <%
 String u = (String)session.getAttribute("username");
-Connection con=null;
-try{
-        String dbUrl = "jdbc:mysql://localhost:3306/ecommerce";
-        Class.forName("com.mysql.jdbc.Driver").newInstance();
-        con=DriverManager.getConnection(dbUrl,"root","");              
-        System.out.println("Connection established for SQL");
-    }
-catch(Exception e){
-        System.out.println("Database connection exception= "+e);}
 %>
      <div class="container-fluid">
 
@@ -51,7 +43,7 @@ catch(Exception e){
 
               <ul class="navbar-nav">
                      <li class="nav-item">
-                         <a class="nav-link" href="<% if(session.getAttribute("username")==null){ out.println("login.jsp");} else if(u=="admin"){ out.println("admin_profile.jsp");} else{out.println("profile.jsp");}%>">
+                         <a class="nav-link" href="<% if(session.getAttribute("username")==null){ out.println("login.jsp");} else if(u.equals("admin")){ out.println("admin_profile.jsp");} else{out.println("profile.jsp");}%>">
                              <img src="assets/log.png" width="30" height="30"/>
                          </a>
                      </li>

@@ -52,7 +52,7 @@ String u="hello";
 
               <ul class="navbar-nav">
                      <li class="nav-item">
-                         <a class="nav-link" href="<%if(session.getAttribute("username")==null){out.print("login.jsp");}else if(u =="admin"){out.print("admin_profile.jsp");}else{out.print("profile.jsp");}%>">
+                         <a class="nav-link" href="<%if(session.getAttribute("username")==null){out.print("login.jsp");}else if(u.equals("admin")){out.print("admin_profile.jsp");}else{out.print("profile.jsp");}%>">
                          <img src="assets/log.png" width="30" height="30"/>
                          </a>
                      </li>
@@ -113,7 +113,7 @@ String u="hello";
 		<div>
 			<!-- Cart Body Starts Here -->
 <%
-PreparedStatement ps=con.prepareStatement("SELECT * from cart where username = '?'");  
+PreparedStatement ps=con.prepareStatement("SELECT * from cart where username = ?");  
 ps.setString(1,u);
 ResultSet rs =ps.executeQuery();
 int grand_total_price=0;
@@ -141,7 +141,7 @@ while(rs.next())
 	else if(temp.contains("kw"))	
 		table = "kidswear";
 	
-	ps=con.prepareStatement("SELECT * FROM ? WHERE productId='?'");  
+	ps=con.prepareStatement("SELECT * FROM ? WHERE productId=?");  
 	ps.setString(1,table);
 	ps.setString(2,pid);
 	ResultSet rs1 =ps.executeQuery();
