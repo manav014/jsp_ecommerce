@@ -7,17 +7,17 @@
 <%@page import="java.sql.*"%>
 <%@ include file = "database_connection.jsp" %>
 <%     
+String red_page="";
 
 if(request.getParameter("checkreg")==null)
-	response.sendRedirect("../signin.jsp");
+	red_page = "../signin.jsp";
 else
 {
 	String sr = request.getParameter("remove");
 	PreparedStatement ps = con.prepareStatement("DELETE from address where sr_no = ?");
 	ps.setString(1, sr);
 	ps.executeUpdate();
-	response.sendRedirect("../select_address.jsp");
-	
+	red_page="../select_address.jsp";	
 	String n = request.getParameter("name");
 	String u = request.getParameter("username");
 	String e = request.getParameter("email");
@@ -30,7 +30,7 @@ else
 	{
 		String msg="Username already taken!!";
 		session.setAttribute("err", msg);
-		response.sendRedirect("../signin.jsp");
+		red_page ="../signin.jsp";
 	}
 	else
 	{
@@ -48,7 +48,7 @@ else
 		ps.setString(2, ep);
 		ps.executeUpdate();
 		session.setAttribute("username", u);
-		response.sendRedirect("../homepage.jsp");
+		red_page = "../homepage.jsp";
 	}
 	else
 	{
@@ -56,6 +56,7 @@ else
 	}
 	}
 }
+response.sendRedirect(red_page);
 
 %>
 </body>

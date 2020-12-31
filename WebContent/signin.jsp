@@ -44,7 +44,7 @@ pageEncoding="ISO-8859-1"%>
                             <label for="confirmpassword" class="label">Confirm Password</label></br>
                             <input id="confirmpassword" type="password" placeholder="Confirm Password" class="user-input" name = "confirmpassword" required></br>
 							<div id = "cnfpass_err" style="color:red;"></div>
-                             <a href="login.php" id="">Have an Account?</a></br>
+                             <a href="login.jsp" id="">Have an Account?</a></br>
 							 <p style="color:red;"><%
 									   if(session.getAttribute("err") != null)
 									   {

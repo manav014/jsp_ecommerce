@@ -13,7 +13,7 @@ else {
 	pid = (String) request.getParameter("productId");
 	
 	String temp = pid;
-		String table;
+		String table="";
 		if(temp.indexOf("ww")!=-1)
 		{
 			table = "womenwear";
@@ -35,10 +35,9 @@ else {
 			table = "kidswear";
 		}
  
-String sql_l = "SELECT * FROM ? WHERE productId= ?";
+String sql_l = "SELECT * FROM "+table+" WHERE productId= ?";
 PreparedStatement st = con.prepareStatement(sql_l);
-st.setString(1, table);
-st.setString(2, pid);
+st.setString(1, pid);
 ResultSet res = st.executeQuery();
 res.next();
 String image = res.getString("image");
@@ -166,7 +165,8 @@ String description = res.getString("description");
 						<option value="5">5</option><option value="6">6</option><option value="7">7</option>
 						<option value="8">8</option><option value="9">9</option><option value="10">10</option></select></td> </tr><br><br>
           <tr> <td>About: </td> <td><% out.print(description); %></td> </tr><br><br>
-		  <tr> <td> <button class="btn btn-outline-dark" type="submit" value="<% out.print(pid); %>" name="Cart">Add to Cart</button></td> <td><button class="btn btn-outline-dark" type="submit" value="<% out.print(pid); %>" name="Buy">Buy Now</button> </td> </tr><br><br>
+          <input type=hidden value=<%out.print(pid); %> name="pid">
+		  <tr> <td> <input class="btn btn-outline-dark" type="submit" value="Add to cart" name="Cart"></td> <td><input class="btn btn-outline-dark" type="submit" value="Buy now" name="Buy"></td> </tr><br><br>
 		  </p>
 		</p>
 		</form>
@@ -205,8 +205,8 @@ Your kids deserve only the best. From bodysuits, booties to strollers. When it c
       Aashutosh Agrawal <a href="https://in.linkedin.com/in/aashutosh-agrawal-281201191"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/inbornhandsome"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
       Ashutosh Kumar Singh <a href="https://www.linkedin.com/in/ashutosh-kumar-singh-576b111b2/"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/ashutosh113"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
       Avanya Wadhwa <a href="https://www.linkedin.com/in/avanya-wadhwa-07b171197"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/avanya080"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
-      Kartikeya Sharma <a href="https://www.linkedin.com/in/kartikeya-sharma-459990188"><img src="assets/link.png" width="20" height="20" alt=""></a> <a herf="https://github.com/savagecarol"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
-     under the guidance of Mr. Anand Kumar Srivastva
+      Manav Agarwal <a href="https://www.linkedin.com/in/manav-agarwal-982553190/"><img src="assets/link.png" width="20" height="20" alt=""></a> <a herf="https://github.com/manav014"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
+     under the guidance of Mr. Prashant Tomer
       </td>
       </tr>
       

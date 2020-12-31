@@ -1,13 +1,14 @@
-<?php
-//-------------------------------------------------------------database connection-------------------------------------------
-include("backend/database_connection.php");
-session_start();
-if(isset($_SESSION['username']))
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+pageEncoding="ISO-8859-1"%>
+<%@ include file="backend/database_connection.jsp" %>
+<%@page import="java.sql.*"%>
+<%  
+String u = null;
+if(session.getAttribute("username")!=null)
 {
-	$u=$_SESSION['username'];
+	u = (String) session.getAttribute("username");
 }
-?>
-
+%>
  <!--HTML5 DECLARARTION-->
   <!DOCTYPE>
   <html lang="en" dir="ltr">
@@ -29,19 +30,18 @@ if(isset($_SESSION['username']))
     <body>
       <div class="container-fluid">
 
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-light">
 
-        <nav class="navbar navbar-expand-lg navbar-light bg-dark text-light">
-
-
-          <a class="navbar-brand" href="homepage.php"> <img src="assets/k.svg" width="120" height="120" alt=""></a>
+          <a class="navbar-brand" href="homepage.jsp"> <img src="assets/k.svg" width="120" height="120" alt=""></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                   aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
           </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
+         <div class="collapse navbar-collapse" id="navbarNav">
               <ul class="navbar-nav mx-auto">
                   <li class="nav-item active">
-                    <h1><strong> <a class="nav-link text-light" href="homepage.php">ExpressDeals <span class="sr-only">(current)</span></a></strong>  </h1>
+
+                    <h1><strong> <a class="nav-link text-light" href="homepage.jsp">ExpressDeals <span class="sr-only">(current)</span></a></strong>  </h1>
 
                   </li>
 
@@ -49,7 +49,7 @@ if(isset($_SESSION['username']))
 
                <ul class="navbar-nav">
                       <li class="nav-item">
-                          <a class="nav-link" href="<?php if(!isset($_SESSION['username'])){ echo 'login.php';} else if($u=='admin'){ echo 'admin_profile.php';} else{ echo 'profile.php';}?>">
+                          <a class="nav-link" href="<% if(session.getAttribute("username")==null){ out.print("login.jsp");} else if(u.equals("admin")){ out.print("admin_profile.jsp");} else{ out.print("profile.jsp");}%>">
                               <img src="assets/log.png" width="30" height="30"/>
                           </a>
                       </li>
@@ -62,9 +62,9 @@ if(isset($_SESSION['username']))
                               <img src="assets/more.png" width="30" height="30"/>
                           </a>
                           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						  <a class="dropdown-item" href="my_orders.php">My Orders</a>
-						   <a class="dropdown-item" href="my_transactions.php">My Transactions</a>
-                            <a class="dropdown-item" href="backend/logout.php">Logout</a>
+						  <a class="dropdown-item" href="my_orders.jsp">My Orders</a>
+						   <a class="dropdown-item" href="my_transactions.jsp">My Transactions</a>
+                            <a class="dropdown-item" href="backend/logout.jsp">Logout</a>
 
                       </li>
 
@@ -75,7 +75,7 @@ if(isset($_SESSION['username']))
 
 
                       <li class="nav-item">
-                          <a class="nav-link" href="cart.php">
+                          <a class="nav-link" href="cart.jsp">
                               <img src="assets/shopping-cart.png" width="30" height="30"/>
                           </a>
                       </li>
@@ -90,12 +90,12 @@ if(isset($_SESSION['username']))
       </nav>
 
     <nav class="navbar navbar-light bg-dark justify-content-between ">
-      <a class="navbar-brand mx-auto text-light" href="homepage.php"><b>Home</b></a>
-    <a class="navbar-brand mx-auto text-light" href="menwear.php"><b>Men's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="womenwear.php"><b>Women's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="kidswear.php"><b>Kid's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="menfootwear.php"><b>Men's FootWear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="womenfootwear.php"><b>Women's FootWear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="homepage.jsp"><b>Home</b></a>
+    <a class="navbar-brand mx-auto text-light" href="menwear.jsp"><b>Men's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="womenwear.jsp"><b>Women's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="kidswear.jsp"><b>Kid's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="menfootwear.jsp"><b>Men's FootWear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="womenfootwear.jsp"><b>Women's FootWear</b></a>
 
       <form class="form-inline ">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -106,99 +106,94 @@ if(isset($_SESSION['username']))
       </form>
     </nav>
 
-
-
-
-
  <!-- <div class="container"> -->
-<?php
+<%
 
-$same="";
-$name="";
-$c=1;
-$d=1;
-$sel="select * from womenwear";
-$cat=$con->query($sel);
-while($rw=$cat->fetch_array())
+String same="";
+String name="";
+int c=1;
+int d=1;
+String sel="select * from womenwear";
+PreparedStatement st = con.prepareStatement(sel);
+ResultSet rs = st.executeQuery();
+while(rs.next())
 {
-	if ($d!=$c)
+	if (d != c)
 	{
-		$d=$d+1;
+		d = d+1;
 	}
 	else
 	{
-	if ($same!=$rw[2])
+	if (!same.equals(rs.getString("name")))
 	{
-		$same=$rw[2];
-	?>
+		same = rs.getString("name");
+	%>
 
 
 
   <div class="alert alert-light" role="alert">
 
-    <div class="alert text-light" align="center" role="alert">
-      <h3 style="color:hsl(355, 44%, 22%)"><i><b><?php echo $rw[6]; ?></b></i></h3>
-      </div>
-       <br>
-       <br>
 
+  <div class="alert text-light" align="center" role="alert">
 
-
-
+    <h3 style="color:hsl(355, 44%, 22%)"><i><b><% out.print(rs.getString("category")); %></b></i></h3>
+    </div>
+    <br>
     <br>
 
 
     <div class="row">
-	<?php 
+	<% 
 	}
-	$st="select * from womenwear where category='$rw[6]'";
-	$sametab=$con->query($st);
-	$e=0;
-	while($rww=$sametab->fetch_array())
+	sel="select * from womenwear where category = ?";
+	st = con.prepareStatement(sel);
+	st.setString(1, rs.getString("category"));
+	ResultSet sametab = st.executeQuery();
+	int e=0;
+	while(sametab.next())
 	{
-		$c=$c+1;
-	if($name!=$rww[2])
+		c = c + 1;
+	if(!name.equals(sametab.getString("name")))
 	{
-		$name=$rww[2];
-		$e=$e+1;
-		?>
+		name = sametab.getString("name");
+		e = e + 1;
+		%>
       <div class="col-md-4">
 
 
     <div class="card mrcard text-white bg-light mb-3 mx-auto" style="width: 15rem; height:42rem;">
-      <img class="card-img-top img-fluid img-thumbnail" src="<?php echo $rww[1]; ?>" height="10%">
+      
+      <img class="card-img-top img-fluid img-thumbnail" src="<% out.print(sametab.getString("image")); %>">
       <div class="card-body">
-        <h5 class="card-title text-dark"><?php echo $rww[2]; ?></h5>
-        <p class="card-text text-dark"><?php echo $rww[5]; ?></p>
-
+        <h5 class="card-title"><% out.print(sametab.getString("name")); %></h5>
+        <p class="card-text"><% out.print(sametab.getString("description")); %></p>
         <div class="container">
-          <form action="product.php" method="POST">
- 			<button class="btn btn-dark" type="submit" value="<?php echo $rww[0]; ?>" name="productId"> View Item </button>
+		<form action="product.jsp" method="POST">
+ 			<button class="btn btn-dark" type="submit" value="<% out.print(sametab.getString("productId")); %>" name="productId"> View Item </button>
  		  </form>
           </div>
       </div>
     </div>
     </div>
-<?php 
+
+<%
 	}
-	if($e%3==0)
+	if(e%3==0)
 	{
-		?><br>
-<?php
+%>
+		<br>
+<%
 	}
 	}
-	}?>
-    
-</div>
-<?php
-}?>
+	} %>
+	</div>
+<%
+}%>
 </div>
 </div>
 </div>
       <!-- </div> -->
-
-
-
+      
       <div class="alert alert-dark text-light bg-dark" role="alert">
       <div class="container mx-auto" align="center">
    
@@ -218,8 +213,8 @@ Your kids deserve only the best. From bodysuits, booties to strollers. When it c
       Aashutosh Agrawal <a href="https://in.linkedin.com/in/aashutosh-agrawal-281201191"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/inbornhandsome"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
       Ashutosh Kumar Singh <a href="https://www.linkedin.com/in/ashutosh-kumar-singh-576b111b2/"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/ashutosh113"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
       Avanya Wadhwa <a href="https://www.linkedin.com/in/avanya-wadhwa-07b171197"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/avanya080"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
-      Kartikeya Sharma <a href="https://www.linkedin.com/in/kartikeya-sharma-459990188"><img src="assets/link.png" width="20" height="20" alt=""></a> <a herf="https://github.com/savagecarol"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
-     under the guidance of Mr. Anand Kumar Srivastva
+      Manav Agarwal <a href="https://www.linkedin.com/in/manav-agarwal-982553190/"><img src="assets/link.png" width="20" height="20" alt=""></a> <a herf="https://github.com/manav014"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
+     under the guidance of Mr. Prashant Tomer
       </td>
       </tr>
       

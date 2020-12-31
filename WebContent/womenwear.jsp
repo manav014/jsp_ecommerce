@@ -49,7 +49,7 @@ if(session.getAttribute("username")!=null)
 
                <ul class="navbar-nav">
                       <li class="nav-item">
-                          <a class="nav-link" href="<% if(session.getAttribute("username")==null){ out.print("login.jsp");} else if(u=="admin"){ out.print("admin_profile.jsp");} else{ out.print("profile.jsp");}%>">
+                          <a class="nav-link" href="<% if(session.getAttribute("username")==null){ out.print("login.jsp");} else if(u.equals("admin")){ out.print("admin_profile.jsp");} else{ out.print("profile.jsp");}%>">
                               <img src="assets/log.png" width="30" height="30"/>
                           </a>
                       </li>
@@ -124,7 +124,7 @@ while(rs.next())
 	}
 	else
 	{
-	if (same != rs.getString("name"))
+	if (!same.equals(rs.getString("name")))
 	{
 		same = rs.getString("name");
 	%>
@@ -153,7 +153,7 @@ while(rs.next())
 	while(sametab.next())
 	{
 		c = c + 1;
-	if(name != sametab.getString("name"))
+	if(!name.equals(sametab.getString("name")))
 	{
 		name = sametab.getString("name");
 		e = e + 1;
@@ -213,8 +213,8 @@ Your kids deserve only the best. From bodysuits, booties to strollers. When it c
       Aashutosh Agrawal <a href="https://in.linkedin.com/in/aashutosh-agrawal-281201191"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/inbornhandsome"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
       Ashutosh Kumar Singh <a href="https://www.linkedin.com/in/ashutosh-kumar-singh-576b111b2/"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/ashutosh113"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
       Avanya Wadhwa <a href="https://www.linkedin.com/in/avanya-wadhwa-07b171197"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/avanya080"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
-      Kartikeya Sharma <a href="https://www.linkedin.com/in/kartikeya-sharma-459990188"><img src="assets/link.png" width="20" height="20" alt=""></a> <a herf="https://github.com/savagecarol"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
-     under the guidance of Mr. Anand Kumar Srivastva
+      Manav Agarwal <a href="https://www.linkedin.com/in/manav-agarwal-982553190/"><img src="assets/link.png" width="20" height="20" alt=""></a> <a herf="https://github.com/manav014"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
+     under the guidance of Mr. Prashant Tomer
       </td>
       </tr>
       

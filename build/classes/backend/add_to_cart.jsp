@@ -6,28 +6,28 @@
 <%@ include file = "database_connection.jsp" %>
 <%@page import="java.sql.*"%>
 <%     
-
+String page_redirect="";
 if(session.getAttribute("username")==null)
 {
-	response.sendRedirect("../login.jsp");
+	page_redirect = "../login.jsp";
 }
 else
 {
-	String pid;
-	if(request.getParameter("cart")!=null)
+	String pid="safd";
+	if(request.getParameter("Cart")!=null)
 	{
-		pid = request.getParameter("cart");
+		pid = request.getParameter("pid");
 	}
 	else
 	{
-		pid = request.getParameter("Buy");
+		pid = request.getParameter("pid");
 	}
 	String u = (String)session.getAttribute("username");
 	String quantity = request.getParameter("quantity");
 	String size = request.getParameter("size");
 	pid = pid.substring(0,pid.length()-1)+size;
 	String temp = pid;
-	String table;
+	String table="";
 	if(temp.indexOf("ww")!=-1)
 	{
 		table = "womenwear";
@@ -48,21 +48,49 @@ else
 	{
 		table = "kidswear";
 	}
+	PreparedStatement ps = con.prepareStatement("SELECT * FROM "+table+" WHERE productId=?");
+	ps.setString(1, pid);
+	ResultSet rs = ps.executeQuery();
+	String price ="";
+	if(rs.next())
+	{
+		price = rs.getString(4);
+	}
+	ps = con.prepareStatement("SELECT * FROM cart where username = ? and productId = ? ");
+	ps.setString(1, u);
+	ps.setString(2, pid);
+	ResultSet rs1= ps.executeQuery();
+	if(rs1.next())
+	{
+		int a = Integer.parseInt(rs1.getString(4));
+		int new_quantity = a + Integer.parseInt(quantity);
+		int new_price = new_quantity * Integer.parseInt(price);
+		 
+		ps = con.prepareStatement("UPDATE cart SET quantity = ?, total_price = ? where username = ? and productId = ?");
+		ps.setInt(1, new_quantity);
+		ps.setInt(2, new_price);
+		ps.setString(3, u);
+		ps.setString(4, pid);
+		ps.executeUpdate();
+	}
+	else {
+		int total_price = Integer.parseInt(quantity) * Integer.parseInt(price);
+		ps = con.prepareStatement("INSERT INTO cart(username, productId, quantity, total_price) values(?, ?, ?, ?)");
+		ps.setString(1, u);
+		ps.setString(2, pid);
+		ps.setString(3, quantity);
+		ps.setInt(4, total_price);
+		ps.executeUpdate();
+	}
 }
 
-
-
-
-
-
-
-
-try{   
-    PreparedStatement ps=con.prepareStatement("insert into login_details values(?,?)");  
-    ps.setString(1,"hello");  
-    ps.setString(2,"hey");   
-    int status=ps.executeUpdate();  
-}catch(Exception e){System.out.println(e);}  
+if(session.getAttribute("Cart")!=null) {
+	page_redirect = "../homepage.jsp";
+}
+else {
+	page_redirect="../cart.jsp";
+}
+response.sendRedirect(page_redirect);
 %>
 </body>
 </html>

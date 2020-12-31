@@ -40,7 +40,6 @@ String u = (String)session.getAttribute("username");
                  </li>
 
              </ul>
-
               <ul class="navbar-nav">
                      <li class="nav-item">
                          <a class="nav-link" href="<% if(session.getAttribute("username")==null){ out.println("login.jsp");} else if(u.equals("admin")){ out.println("admin_profile.jsp");} else{out.println("profile.jsp");}%>">
@@ -50,15 +49,18 @@ String u = (String)session.getAttribute("username");
 
 
 
+ <% if(session.getAttribute("username")!=null){%>
 
                      <li class="nav-item dropdown">
                        <a class="nav-link dropdown-toggle" href="#" id="navbarNavDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                              <img src="assets/more.png" width="30" height="30"/>
                          </a>
+                        
                          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						 <a class="dropdown-item" href="my_orders.jsp">My Orders</a>
 						   <a class="dropdown-item" href="my_transactions.jsp">My Transactions</a>
                             <a class="dropdown-item" href="backend/logout.jsp">Logout</a>
+                            
                      </li>
 
 
@@ -79,7 +81,7 @@ String u = (String)session.getAttribute("username");
 
 
          </div>
-
+		<%} %>
      </nav>
 
    <nav class="navbar navbar-light bg-dark justify-content-between ">
@@ -364,8 +366,8 @@ Your kids deserve only the best. From bodysuits, booties to strollers. When it c
       Aashutosh Agrawal <a href="https://in.linkedin.com/in/aashutosh-agrawal-281201191"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/inbornhandsome"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
       Ashutosh Kumar Singh <a href="https://www.linkedin.com/in/ashutosh-kumar-singh-576b111b2/"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/ashutosh113"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
       Avanya Wadhwa <a href="https://www.linkedin.com/in/avanya-wadhwa-07b171197"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/avanya080"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
-      Kartikeya Sharma <a href="https://www.linkedin.com/in/kartikeya-sharma-459990188"><img src="assets/link.png" width="20" height="20" alt=""></a> <a herf="https://github.com/savagecarol"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
-     under the guidance of Mr. Anand Kumar Srivastva
+      Manav Agarwal <a href="https://www.linkedin.com/in/manav-agarwal-982553190/"><img src="assets/link.png" width="20" height="20" alt=""></a> <a herf="https://github.com/manav014"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
+     under the guidance of Mr. Prashant Tomer
       </td>
       </tr>
       

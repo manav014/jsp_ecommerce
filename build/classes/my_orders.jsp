@@ -1,13 +1,15 @@
-<?php
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+pageEncoding="ISO-8859-1"%>
+<%@ include file="backend/database_connection.jsp" %>
+<%@page import="java.sql.*"%>
 
-session_start();
-if(!isset($_SESSION["username"])) 
-	header("location:login.php");
+<%
+String u = null;
+if(session.getAttribute("username")==null)
+	response.sendRedirect("login.jsp");
 else {
-	include("backend/database_connection.php");
-
-	$u = $_SESSION["username"];
-?>
+	u = (String) session.getAttribute("username");
+%>
 <!--HTML5 DECLARARTION-->
   <!DOCTYPE>
   <html lang="en" dir="ltr">
@@ -33,7 +35,7 @@ else {
         <nav class="navbar navbar-expand-lg navbar-light bg-dark">
 
 
-          <a class="navbar-brand" href="homepage.php"> <img src="assets/k.svg" width="120" height="120" alt=""></a>
+          <a class="navbar-brand" href="homepage.jsp"> <img src="assets/k.svg" width="120" height="120" alt=""></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                   aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -42,7 +44,7 @@ else {
               <ul class="navbar-nav mx-auto">
                   <li class="nav-item active">
 
-                    <h1><strong> <a class="nav-link text-light" href="homepage.php">ExpressDeals <span class="sr-only">(current)</span></a></strong>  </h1>
+                    <h1><strong> <a class="nav-link text-light" href="homepage.jsp">ExpressDeals <span class="sr-only">(current)</span></a></strong>  </h1>
 
                   </li>
 
@@ -50,7 +52,7 @@ else {
 
                <ul class="navbar-nav">
                       <li class="nav-item">
-                          <a class="nav-link" href="<?php if(!isset($_SESSION['username'])){ echo 'login.php';} else if($u=='admin'){ echo 'admin_profile.php';} else{ echo 'profile.php';}?>">
+                          <a class="nav-link" href="<% if(session.getAttribute("username")==null){ out.print("login.jsp");} else if(u=="admin"){ out.print("admin_profile.jsp");} else{ out.print("profile.jsp");}%>">
                               <img src="assets/log.png" width="30" height="30"/>
                           </a>
                       </li>
@@ -63,9 +65,9 @@ else {
                               <img src="assets/more.png" width="30" height="30"/>
                           </a>
                           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						  <a class="dropdown-item" href="my_orders.php">My Orders</a>
-						   <a class="dropdown-item" href="my_transactions.php">My Transactions</a>
-                            <a class="dropdown-item" href="backend/logout.php">Logout</a>
+						  <a class="dropdown-item" href="my_orders.jsp">My Orders</a>
+						   <a class="dropdown-item" href="my_transactions.jsp">My Transactions</a>
+                            <a class="dropdown-item" href="backend/logout.jsp">Logout</a>
 
                       </li>
 
@@ -76,7 +78,7 @@ else {
 
 
                       <li class="nav-item">
-                          <a class="nav-link" href="cart.php">
+                          <a class="nav-link" href="cart.jsp">
                               <img src="assets/shopping-cart.png" width="30" height="30"/>
                           </a>
                       </li>
@@ -91,86 +93,112 @@ else {
       </nav>
 
 
-    <nav class="navbar navbar-light bg-dark justify-content-between ">
-      <a class="navbar-brand mx-auto text-light" href="homepage.php"><b>Home</b></a>
-    <a class="navbar-brand mx-auto text-light" href="menwear.php"><b>Men's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="womenwear.php"><b>Women's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="kidswear.php"><b>Kid's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="menfootwear.php"><b>Men's FootWear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="womenfootwear.php"><b>Women's FootWear</b></a>
+   <nav class="navbar navbar-light bg-dark justify-content-between ">
+      <a class="navbar-brand mx-auto text-light" href="homepage.jsp"><b>Home</b></a>
+    <a class="navbar-brand mx-auto text-light" href="menwear.jsp"><b>Men's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="womenwear.jsp"><b>Women's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="kidswear.jsp"><b>Kid's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="menfootwear.jsp"><b>Men's FootWear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="womenfootwear.jsp"><b>Women's FootWear</b></a>
 
     </nav>
 	<div class="container">
 
-<?php
-	if(!isset($_GET['page'])) {$page=1;}
-		else {$page= $_GET['page'];}
+<%
+	int pag = 0;
+	if(request.getParameter("page") == null) {pag = 1;}
+		else {pag = Integer.parseInt(request.getParameter("page"));}
 
-		$lowerlimit= ($page-1)*10;
-		$noofrow= 10;
-	$orders = $con->query("SELECT * from orders_log where username = '$u' limit $lowerlimit,$noofrow");
-	if(mysqli_num_rows($orders) > 0) {
-		while($order = mysqli_fetch_array($orders)) {
-		$pid = $order[2];
+		int lowerlimit= (pag-1)*10;
+		int noofrow= 10;
+		String sel = "SELECT * from orders_log where username = ? limit ?, ?";
+		PreparedStatement st = con.prepareStatement(sel);
+		st.setString(1, u);
+		st.setInt(2, lowerlimit);
+		st.setInt(3, noofrow);
+	ResultSet orders = st.executeQuery();
+	if(orders.next()) {
+		do {
+		String pid = orders.getString("productId");
 		//figure out product table
-		$temp = " ".$pid;
-		if(strpos($temp, "ww"))
-			$table = "womenwear";
-		else if(strpos($temp, "mw"))
-			$table = "menwear";
-		else if(strpos($temp, "wfw"))
-			$table = "womenfootwear";
-		else if(strpos($temp, "mfw"))
-			$table = "menfootwear";
-		else if(strpos($temp, "kw"))
-			$table = "kidswear";
+		String temp = pid;
+		String table="";
+		if(temp.indexOf("ww")!=-1)
+		{
+			table = "womenwear";
+		}
+		else if(temp.indexOf("mw")!=-1)
+		{
+			table = "menwear";
+		}
+		else if(temp.indexOf("wfw")!=-1)
+		{
+			table = "womenfootwear";
+		}
+		else if(temp.indexOf("mfw")!=-1)
+		{
+			table = "menfootwear";
+		}
+		else if(temp.indexOf("kw")!=-1)
+		{
+			table = "kidswear";
+		}
 
 		//fetch the product details
-		$prod_det = $con->query("SELECT * FROM $table WHERE productId='$pid'");
-		$prod = mysqli_fetch_array($prod_det);
+		sel = "SELECT * FROM " + table +" WHERE productId=?";
+		st = con.prepareStatement(sel);
+		st.setString(1, pid);
+		ResultSet prod = st.executeQuery();
+		prod.next();
 
-?>
+%>
 		<div class="alert alert-dark" role="alert" style="margin-top: 30px">
 		<!-- This prints all the orders done by the user -->
 		<div>
 			<table>
-				<tr> <td rowspan="4"> <img src = "<?php echo $prod[1]; ?>" alt="image" height="100" width="100"> </td> <td> <?php echo $prod[2]; ?> </td> </tr>
-				<tr> 																									<td> Size: <?php echo $prod[4]; ?> </td> </tr>
-				<tr>																				  					<td> Quantity: <?php echo $order[3]; ?> </td> </tr>
-				<tr> 																				   					<td> Total Price: <?php echo $order[3]*$prod[3]; ?> </td> </tr>
-				<tr> <td> Order Placed On: </td> 																<td> <?php echo $order[4]; ?> </td> </tr>
+				<tr> <td rowspan="4"> <img src = "<% out.print(prod.getString("image")); %>" alt="image" height="100" width="100"> </td> <td> <% out.print(prod.getString("name")); %> </td> </tr>
+				<tr> 																									<td> Size: <% out.print(prod.getString("size")); %> </td> </tr>
+				<tr>																				  					<td> Quantity: <% out.print(prod.getString("price")); %> </td> </tr>
+				<tr> 																				   					<td> Total Price: <% out.print(Integer.parseInt(prod.getString("price")) * Integer.parseInt(orders.getString("quantity"))); %> </td> </tr>
+				<tr> <td> Order Placed On: </td> 																<td> <% out.print(orders.getString("date")); %> </td> </tr>
 			</table>
 		</div>
 		</div>
 
-<?php 
+<%
 	}
-	$s2= "select * from orders_log where username='$u'";
-		   $result1= $con->query($s2);
-           $page = ceil($result1->num_rows/$noofrow);
-?>
+	while(orders.next());
+	String s2= "select * from orders_log where username=?";
+	PreparedStatement st2 = con.prepareStatement(s2);
+	st2.setString(1, u);
+	ResultSet result1 = st2.executeQuery();
+	int pg = 0;
+	while(result1.next()) 
+		pg = pg + 1;
+    pg = (pg + noofrow - 1) / noofrow;
+%>
 <center>
-<?php		   
-		   for($i=1;$i<=$page;$i++)
-		   { ?>
-	      <a href= "my_orders.php?page=<?php echo $i; ?>"><?php echo $i;?> </a>
-		  <?php
+<%		   
+		   for(int i=1; i<= pg; i++)
+		   { %>
+	      <a href= "my_orders.jsp?page=<% out.print(i); %>"><% out.print(i); %> </a>
+		  <%
 	}
 	}
 	else {
 
-?></center>
+%></center>
 
 		<br>
 		<div class="alert text-info" align="center" role="alert">
       			<h4><b>You have not placed any orders till now..!</b></h4>
 	  		</div>
 
-<?php
+<%
 	}
 }
 
-?>
+%>
 </div>
 </div>
 
@@ -195,8 +223,8 @@ Your kids deserve only the best. From bodysuits, booties to strollers. When it c
       Aashutosh Agrawal <a href="https://in.linkedin.com/in/aashutosh-agrawal-281201191"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/inbornhandsome"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
       Ashutosh Kumar Singh <a href="https://www.linkedin.com/in/ashutosh-kumar-singh-576b111b2/"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/ashutosh113"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
       Avanya Wadhwa <a href="https://www.linkedin.com/in/avanya-wadhwa-07b171197"><img src="assets/link.png" width="20" height="20" alt=""></a> <a href="https://github.com/avanya080"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
-      Kartikeya Sharma <a href="https://www.linkedin.com/in/kartikeya-sharma-459990188"><img src="assets/link.png" width="20" height="20" alt=""></a> <a herf="https://github.com/savagecarol"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
-     under the guidance of Mr. Anand Kumar Srivastva
+      Manav Agarwal <a href="https://www.linkedin.com/in/manav-agarwal-982553190/"><img src="assets/link.png" width="20" height="20" alt=""></a> <a herf="https://github.com/manav014"><img src="assets/git.png" width="20" height="20" alt=""></a><br>
+     under the guidance of Mr. Prashant Tomer
       </td>
       </tr>
       
