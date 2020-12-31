@@ -1,14 +1,15 @@
-<?php
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+pageEncoding="ISO-8859-1"%>
+<%@ include file="backend/database_connection.jsp" %>
+<%@page import="java.sql.*"%>
 
-session_start();
-if(!isset($_SESSION["username"]))
-	header("location:login.php");
+<%
+String u = null;
+if(session.getAttribute("username")==null)
+	response.sendRedirect("login.jsp");
 else {
-	include("backend/database_connection.php");
-
-	$u = $_SESSION["username"];
-?>
-
+	u = (String) session.getAttribute("username");
+%>
 <!--HTML5 DECLARARTION-->
 <!DOCTYPE>
   <html lang="en" dir="ltr">
@@ -34,7 +35,7 @@ else {
         <nav class="navbar navbar-expand-lg navbar-light bg-dark">
 
 
-          <a class="navbar-brand" href="homepage.php"> <img src="assets/k.svg" width="120" height="120" alt=""></a>
+          <a class="navbar-brand" href="homepage.jsp"> <img src="assets/k.svg" width="120" height="120" alt=""></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                   aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -43,7 +44,7 @@ else {
               <ul class="navbar-nav mx-auto">
                   <li class="nav-item active">
 
-                    <h1><strong> <a class="nav-link text-light" href="homepage.php">ExpressDeals <span class="sr-only">(current)</span></a></strong>  </h1>
+                    <h1><strong> <a class="nav-link text-light" href="homepage.jsp">ExpressDeals <span class="sr-only">(current)</span></a></strong>  </h1>
 
                   </li>
 
@@ -51,7 +52,7 @@ else {
 
                <ul class="navbar-nav">
                       <li class="nav-item">
-                          <a class="nav-link" href="<?php if(!isset($_SESSION['username'])){ echo 'login.php';} else if($u=='admin'){ echo 'admin_profile.php';} else{ echo 'profile.php';}?>">
+                          <a class="nav-link" href="<% if(session.getAttribute("username")==null){ out.print("login.jsp");} else if(u=="admin"){ out.print("admin_profile.jsp");} else{ out.print("profile.jsp");}%>">
                               <img src="assets/log.png" width="30" height="30"/>
                           </a>
                       </li>
@@ -64,9 +65,10 @@ else {
                               <img src="assets/more.png" width="30" height="30"/>
                           </a>
                           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						  <a class="dropdown-item" href="my_orders.php">My Orders</a>
-						   <a class="dropdown-item" href="my_transactions.php">My Transactions</a>
-                            <a class="dropdown-item" href="backend/logout.php">Logout</a>
+						  <a class="dropdown-item" href="my_orders.jsp">My Orders</a>
+						   <a class="dropdown-item" href="my_transactions.jsp">My Transactions</a>
+                            <a class="dropdown-item" href="backend/logout.jsp">Logout</a>
+
 
                       </li>
 
@@ -77,7 +79,7 @@ else {
 
 
                       <li class="nav-item">
-                          <a class="nav-link" href="cart.php">
+                          <a class="nav-link" href="cart.jsp">
                               <img src="assets/shopping-cart.png" width="30" height="30"/>
                           </a>
                       </li>
@@ -93,56 +95,60 @@ else {
 
 
     <nav class="navbar navbar-light bg-dark justify-content-between ">
-      <a class="navbar-brand mx-auto text-light" href="homepage.php"><b>Home</b></a>
-    <a class="navbar-brand mx-auto text-light" href="menwear.php"><b>Men's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="womenwear.php"><b>Women's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="kidswear.php"><b>Kid's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="menfootwear.php"><b>Men's FootWear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="womenfootwear.php"><b>Women's FootWear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="homepage.jsp"><b>Home</b></a>
+    <a class="navbar-brand mx-auto text-light" href="menwear.jsp"><b>Men's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="womenwear.jsp"><b>Women's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="kidswear.jsp"><b>Kid's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="menfootwear.jsp"><b>Men's FootWear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="womenfootwear.jsp"><b>Women's FootWear</b></a>
 
     </nav>
 	<div class="container">
 
 
-<?php
-	$transactions = $con->query("SELECT * from transaction where username = '$u' ");
-	if(mysqli_num_rows($transactions) > 0) {
-		$sr = 0;
+<%
+	String sel = "SELECT * from transaction where username = ? ";
+	PreparedStatement st = con.prepareStatement(sel);
+	st.setString(1, u);
+	ResultSet transactions = st.executeQuery();
+	if(transactions.next()) {
+		int sr = 0;
 
-?>
+%>
 
 		<div class="alert alert-dark" role="alert" style="margin-top: 30px">
 			<table>
 				<tr> <th> Sr. No. </th> <td>&nbsp; &nbsp;&nbsp; &nbsp;</td> <th> Transaction Id. </th> <td>&nbsp; &nbsp;&nbsp; &nbsp;</td> <th> Processed on </th> <td>&nbsp; &nbsp;&nbsp; &nbsp;</td> <th> Amount Paid </th> <td>&nbsp; &nbsp;&nbsp; &nbsp;</td> <th> Status </th> </tr>
 
 <?php
-	while($transaction = mysqli_fetch_array($transactions)) {
-		$sr ++;
+	do {
+		sr ++;
 
 ?>
 
-				<tr> <td> <?php echo $sr; ?> </td> <td>&nbsp; &nbsp;&nbsp; &nbsp;</td> <td> <?php echo md5($transaction[0]); ?> </td> <td>&nbsp; &nbsp;&nbsp; &nbsp;</td> <td> <?php echo $transaction[3]; ?> </td> <td>&nbsp; &nbsp;&nbsp; &nbsp;</td> <td> <?php echo $transaction[2]; ?> </td> <td>&nbsp; &nbsp;&nbsp; &nbsp;</td> <td> <?php echo $transaction[4]; ?> </td></tr>
+				<tr> <td> <% out.print(sr); %> </td> <td>&nbsp; &nbsp;&nbsp; &nbsp;</td> <td> <% out.print(transaction.getString("sr_no")); %> </td> <td>&nbsp; &nbsp;&nbsp; &nbsp;</td> <td> <% out.print(transaction.getString("date")); %> </td> <td>&nbsp; &nbsp;&nbsp; &nbsp;</td> <td> <% out.print(transaction.getString("amount")); %> </td> <td>&nbsp; &nbsp;&nbsp; &nbsp;</td> <td> <% out.print(transaction.getString("status")); %> </td></tr>
 
-<?php
+<%
 	}
-?>
+	while(transactions.next());
+%>
 
 			</table>
 		</div>
 
-<?php
+<%
 	}
 	else {
-?>
+%>
 		<br>
 		<div class="alert text-info" align="center" role="alert">
       			<h4><b>You have not done any transaction..!</b></h4>
 	  		</div>
 
-<?php
+<%
 	}
 }
-?>
+%>
 
 </div>
 </div>

@@ -1,6 +1,5 @@
-<?php
-session_start();
-?>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,7 +24,7 @@ session_start();
                         ExpressDeals
                     </div>
                     <div class="login-form">
-                        <form action="backend/server.php" method="POST" onsubmit="return validateForm();">
+                        <form action="backend/server.jsp" method="POST" onsubmit="return validateForm();">
 
                             <label for="name" class="label">Name</label></br>
                             <input id="name" type="text" placeholder="Name" class="user-input" name="name" required ></br>
@@ -46,12 +45,12 @@ session_start();
                             <input id="confirmpassword" type="password" placeholder="Confirm Password" class="user-input" name = "confirmpassword" required></br>
 							<div id = "cnfpass_err" style="color:red;"></div>
                              <a href="login.php" id="">Have an Account?</a></br>
-							 <p style="color:red;"><?php 
-									   if(isset($_SESSION['err']))
+							 <p style="color:red;"><%
+									   if(session.getAttribute("err") != null)
 									   {
-										echo $_SESSION['err'];
-									    session_destroy();
-										}?>
+										out.print(session.getAttribute("err"));
+									    session.invalidate();
+										}%>
 
 								</p>
 

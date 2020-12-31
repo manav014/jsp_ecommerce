@@ -1,49 +1,53 @@
-<?php
-session_start();
-if(!isset($_POST['productId'])) 
-	header("location:homepage.php");
-$pid = $_POST["productId"];
-if(isset($_SESSION['username']))
-{
-	$u=$_SESSION['username'];
-}
-//------------------------------------------------------database connection---------------------------------------
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+pageEncoding="ISO-8859-1"%>
+<%@ include file="backend/database_connection.jsp" %>
+<%@page import="java.sql.*"%>
+<%
+String u = null;
+if(session.getAttribute("username")!=null)
+	u = (String) session.getAttribute("username");
+String pid = null;
+if(request.getParameter("productId")==null)
+	response.sendRedirect("homepage.jsp");
+else {
+	pid = (String) request.getParameter("productId");
+	
+	String temp = pid;
+		String table;
+		if(temp.indexOf("ww")!=-1)
+		{
+			table = "womenwear";
+		}
+		else if(temp.indexOf("mw")!=-1)
+		{
+			table = "menwear";
+		}
+		else if(temp.indexOf("wfw")!=-1)
+		{
+			table = "womenfootwear";
+		}
+		else if(temp.indexOf("mfw")!=-1)
+		{
+			table = "menfootwear";
+		}
+		else if(temp.indexOf("kw")!=-1)
+		{
+			table = "kidswear";
+		}
+ 
+String sql_l = "SELECT * FROM ? WHERE productId= ?";
+PreparedStatement st = con.prepareStatement(sql_l);
+st.setString(1, table);
+st.setString(2, pid);
+ResultSet res = st.executeQuery();
+res.next();
+String image = res.getString("image");
+String name = res.getString("name");
+String price = res.getString("price");
+String size = res.getString("size");
+String description = res.getString("description");
 
-
-include("backend/database_connection.php");
-
-
-//------------------------------------------------------checking the product table--------------------------------
-
-$temp = " ".$pid;
-if(strpos($temp, "ww"))
-	$table = "womenwear";
-else if(strpos($temp, "mw"))
-	$table = "menwear";
-else if(strpos($temp, "wfw"))
-	$table = "womenfootwear";
-else if(strpos($temp, "mfw"))
-	$table = "menfootwear";
-else if(strpos($temp, "kw"))
-	$table = "kidswear";
-else 
-	header("location:homepage.php");
-
-//-------------------------------------------------------fetching all the details---------------------------------
-
-$sql_l = "SELECT * FROM $table WHERE productId='$pid'";
-$res = $con->query($sql_l);
-$prod = mysqli_fetch_array($res);
-
-$image = $prod[1];
-$name = $prod[2];
-$price = $prod[3];
-$size = $prod[4];
-$description = $prod[5];
-
-//-----------------------------------------------------Show the Details-------------------------------------------
-
-?>
+%>
 <!doctype html>
 <html lang="en">
   <head>
@@ -54,14 +58,14 @@ $description = $prod[5];
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
-    <title><?php echo $name." -Item Description"; ?></title>
+    <title><% out.print(name + " - Item Description"); %></title>
   </head>
   <body>
     <div class="container-fluid">
 
         <nav class="navbar navbar-expand-lg navbar-light bg-dark">
 
-          <a class="navbar-brand" href="homepage.php"> <img src="assets/k.svg" width="120" height="120" alt=""></a>
+          <a class="navbar-brand" href="homepage.jsp"> <img src="assets/k.svg" width="120" height="120" alt=""></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                   aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -69,14 +73,14 @@ $description = $prod[5];
           <div class="collapse navbar-collapse" id="navbarNav">
               <ul class="navbar-nav mx-auto">
                   <li class="nav-item active">
-                    <h1><strong> <a class="nav-link text-light" href="homepage.php">ExpressDeals <span class="sr-only">(current)</span></a></strong>  </h1>
+                    <h1><strong> <a class="nav-link text-light" href="homepage.jsp">ExpressDeals <span class="sr-only">(current)</span></a></strong>  </h1>
                   </li>
 
               </ul>
 
                <ul class="navbar-nav">
                       <li class="nav-item">
-                          <a class="nav-link" href="<?php if(!isset($_SESSION['username'])){ echo 'login.php';} else if($u=='admin'){ echo 'admin_profile.php';} else{ echo 'profile.php';}?>">
+                          <a class="nav-link" href="<% if(session.getAttribute("username")==null){ out.print("login.jsp");} else if(u=="admin"){ out.print("admin_profile.jsp");} else{ out.print("profile.jsp");}%>">
                               <img src="assets/log.png" width="30" height="30"/>
                           </a>
                       </li>
@@ -89,9 +93,10 @@ $description = $prod[5];
                               <img src="assets/more.png" width="30" height="30"/>
                           </a>
                           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						  <a class="dropdown-item" href="my_orders.php">My Orders</a>
-						   <a class="dropdown-item" href="my_transactions.php">My Transactions</a>
-                            <a class="dropdown-item" href="backend/logout.php">Logout</a>
+						  <a class="dropdown-item" href="my_orders.jsp">My Orders</a>
+						   <a class="dropdown-item" href="my_transactions.jsp">My Transactions</a>
+                            <a class="dropdown-item" href="backend/logout.jsp">Logout</a>
+
                       </li>
 
 
@@ -101,7 +106,7 @@ $description = $prod[5];
 
 
                       <li class="nav-item">
-                          <a class="nav-link" href="cart.php">
+                          <a class="nav-link" href="cart.jsp">
                               <img src="assets/shopping-cart.png" width="30" height="30"/>
                           </a>
                       </li>
@@ -115,13 +120,14 @@ $description = $prod[5];
 
       </nav>
 
-    <nav class="navbar navbar-dark bg-dark text-light justify-content-between ">
-	    <a class="navbar-brand mx-auto text-light" href="homepage.php"><b>Home</b></a>
-    <a class="navbar-brand mx-auto text-light" href="menwear.php"><b>Men's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="womenwear.php"><b>Women's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="kidswear.php"><b>Kid's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="menfootwear.php"><b>Men's FootWear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="womenfootwear.php"><b>Women's FootWear</b></a>
+    <nav class="navbar navbar-light bg-dark justify-content-between ">
+      <a class="navbar-brand mx-auto text-light" href="homepage.jsp"><b>Home</b></a>
+    <a class="navbar-brand mx-auto text-light" href="menwear.jsp"><b>Men's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="womenwear.jsp"><b>Women's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="kidswear.jsp"><b>Kid's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="menfootwear.jsp"><b>Men's FootWear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="womenfootwear.jsp"><b>Women's FootWear</b></a>
+
       <form class="form-inline ">
         <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
         <button type="submit" class="btn btn-dark">
@@ -137,37 +143,39 @@ $description = $prod[5];
     <br>
     <br>
     <div class="alert text-info" align="center" role="alert">
-      <h1><b><?php echo $name; ?></b></h2>
+      <h1><b><% out.print(name); %></b></h2>
   </div>
     
 
   <div class="container">
 	<div class="alert alert-dark" role="alert" style="margin-top: 50px">
 
-	<form action="backend/add_to_cart.php" method="POST">
+	<form action="backend/add_to_cart.jsp" method="POST">
 
         <p align="center">
             <a class="navbar-brand" >
-              <img src="<?php echo $image; ?>" width="300" height="300" class="d-inline-block align-top" alt="" loading="lazy">
+              <img src="<% out.print(image); %>" width="300" height="300" class="d-inline-block align-top" alt="" loading="lazy">
 			</a>
           <p align="center"> 
-          <tr> <td> Product:</td><td> <?php echo $name; ?></td></tr><br><br>
-          <tr> <td>	Price:</td> <td><?php echo "Rs. ".$price; ?></td> </tr><br><br>
+          <tr> <td> Product:</td><td> <% out.print(name); %></td></tr><br><br>
+          <tr> <td>	Price:</td> <td><% out.print("Rs. " + price); %></td> </tr><br><br>
 					<tr> <td>Size: </td><td><select name="size"><option value="s">S</option>
             <option value="m">M</option><option value="l">L</option></select></td> </tr><br><br>
 			<tr> <td>Quantity: </td><td><select name="quantity"><option value="1">1</option>
 						<option value="2">2</option><option value="3">3</option><option value="4">4</option>
 						<option value="5">5</option><option value="6">6</option><option value="7">7</option>
 						<option value="8">8</option><option value="9">9</option><option value="10">10</option></select></td> </tr><br><br>
-          <tr> <td>About: </td> <td><?php echo $description; ?></td> </tr><br><br>
-		  <tr> <td> <button class="btn btn-outline-dark" type="submit" value="<?php echo $pid; ?>" name="Cart">Add to Cart</button></td> <td><button class="btn btn-outline-dark" type="submit" value="<?php echo $pid; ?>" name="Buy">Buy Now</button> </td> </tr><br><br>
+          <tr> <td>About: </td> <td><% out.print(description); %></td> </tr><br><br>
+		  <tr> <td> <button class="btn btn-outline-dark" type="submit" value="<% out.print(pid); %>" name="Cart">Add to Cart</button></td> <td><button class="btn btn-outline-dark" type="submit" value="<% out.print(pid); %>" name="Buy">Buy Now</button> </td> </tr><br><br>
 		  </p>
 		</p>
 		</form>
     </div>
   </div>
 
-
+<%
+}
+%>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

@@ -1,17 +1,20 @@
-<?php
-//---------------------------------------database connection-----------------------------
-include("backend/database_connection.php");
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+pageEncoding="ISO-8859-1"%>
+<%@ include file="backend/database_connection.jsp" %>
+<%@page import="java.sql.*"%>
+<%
+String s = null;
+if(session.getAttribute("username")==null)
+	response.sendRedirect("login.jsp");
+else
+	s = (String) session.getAttribute("username");
 
-session_start();
-if(!isset($_SESSION['username']))
-{
-	header("location:login.php");
-}
-$s=$_SESSION['username'];
-$ut="select * from users where username='$s'";
-$aut=$con->query($ut);
+String sel = "select * from users where username= ?";
+PreparedStatement st = con.prepareStatement(sel);
+st.setString(1, s);
+ResultSet aut = st.executeQuery();
 
-?>
+%>
 <!--HTML5 DECLARARTION-->
  <!DOCTYPE>
  <html lang="en" dir="ltr">
@@ -19,7 +22,7 @@ $aut=$con->query($ut);
      <!--all meta tags-->
      <meta charset="utf-8">
      <meta name="viewport" content="width=device-width,initial-scale=1 shrink-to-fit=no">
-     <title>Home Page</title>
+     <title>Profile Page</title>
      <!--Bootstrap CSS and other CSS files-->
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
    <!--Bootstrap JS and other JS files-->
@@ -34,7 +37,7 @@ $aut=$con->query($ut);
 
        <nav class="navbar navbar-expand-lg navbar-light bg-dark">
 
-         <a class="navbar-brand" href="#"> <img src="assets/k.svg" width="120" height="120" alt=""></a>
+         <a class="navbar-brand" href="homepage.jsp"> <img src="assets/k.svg" width="120" height="120" alt=""></a>
          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                  aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
              <span class="navbar-toggler-icon"></span>
@@ -42,14 +45,14 @@ $aut=$con->query($ut);
          <div class="collapse navbar-collapse" id="navbarNav">
              <ul class="navbar-nav mx-auto">
                  <li class="nav-item active">
-                   <h1><strong> <a class="nav-link text-light" href="#">ExpressDeals <span class="sr-only">(current)</span></a></strong>  </h1>
+                   <h1><strong> <a class="nav-link text-light" href="homepage.jsp">ExpressDeals <span class="sr-only">(current)</span></a></strong>  </h1>
                  </li>
 
              </ul>
 
               <ul class="navbar-nav">
                      <li class="nav-item">
-                         <a class="nav-link" href="<?php if(!isset($_SESSION['username'])){ echo 'login.php';} else if($u=='admin'){ echo 'admin_profile.php';} else{ echo 'profile.php';}?>">
+                         <a class="nav-link" href="<% if(session.getAttribute("username")==null){ out.print("login.jsp");} else if(s=="admin"){ out.print("admin_profile.jsp");} else{ out.print("profile.jsp");}%>">
                              <img src="assets/log.png" width="30" height="30"/>
                          </a>
                      </li>
@@ -62,9 +65,10 @@ $aut=$con->query($ut);
                              <img src="assets/more.png" width="30" height="30"/>
                          </a>
                          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                           <a class="dropdown-item" href="my_orders.php">My Orders</a>
-						   <a class="dropdown-item" href="my_transactions.php">My Transactions</a>
-                            <a class="dropdown-item" href="backend/logout.php">Logout</a>
+						  <a class="dropdown-item" href="my_orders.jsp">My Orders</a>
+						   <a class="dropdown-item" href="my_transactions.jsp">My Transactions</a>
+                            <a class="dropdown-item" href="backend/logout.jsp">Logout</a>
+
                      </li>
 
 
@@ -74,7 +78,7 @@ $aut=$con->query($ut);
 
 
                      <li class="nav-item">
-                         <a class="nav-link" href="cart.php">
+                         <a class="nav-link" href="cart.jsp">
                              <img src="assets/shopping-cart.png" width="30" height="30"/>
                          </a>
                      </li>
@@ -88,13 +92,14 @@ $aut=$con->query($ut);
 
      </nav>
 
-   <nav class="navbar navbar-light bg-dark justify-content-between ">
-     <a class="navbar-brand mx-auto text-light" href="homepage.php"><b>Home</b></a>
-   <a class="navbar-brand mx-auto text-light" href="menwear.php"><b>Men's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="womenwear.php"><b>Women's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="kidswear.php"><b>Kid's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="menfootwear.php"><b>Men's FootWear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="womenfootwear.php"><b>Women's FootWear</b></a>
+  <nav class="navbar navbar-light bg-dark justify-content-between ">
+      <a class="navbar-brand mx-auto text-light" href="homepage.jsp"><b>Home</b></a>
+    <a class="navbar-brand mx-auto text-light" href="menwear.jsp"><b>Men's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="womenwear.jsp"><b>Women's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="kidswear.jsp"><b>Kid's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="menfootwear.jsp"><b>Men's FootWear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="womenfootwear.jsp"><b>Women's FootWear</b></a>
+
      <form class="form-inline ">
        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
        <button type="submit" class="btn btn-dark">
@@ -112,22 +117,22 @@ $aut=$con->query($ut);
 		<div class="col-md-3"></div>
 		
     <div class="col-md-6">
-      <form class="form-group" action="backend/profile_edit.php" method="POST">
-						<?php
-						$r = $aut->fetch_array();
-						?>
+      <form class="form-group" action="backend/profile_edit.jsp" method="POST">
+						<%
+						aut.next();
+						%>
 
 						<div class="form-group">
 						<label for="name" class="label">Name</label>
-                            <input id="name" type="text" value="<?php echo $r[0]; ?>"  name="name" class="form-control" required ></br>
+                            <input id="name" type="text" value="<% out.print(aut.getString("name")); %>"  name="name" class="form-control" required ></br>
 							</div>
 						<div class="form-group">
                             <label for="email" class="label">Email</label>
-                            <input id="email" type="email" value="<?php echo $r[2]; ?>"   name="email" class="form-control" required></br>	
+                            <input id="email" type="email" value="<% out.print(aut.getString("email")); %>"   name="email" class="form-control" required></br>	
 							</div>
 						<div class="form-group">
                             <label for="mobileno" class="label">Mobile No.</label>
-							<input id="mobileno" type="text" value="<?php echo $r[3]; ?>"  name="mobileno" class="form-control" required></br>
+							<input id="mobileno" type="text" value="<% out.print(aut.getString("mobileno")); %>"  name="mobileno" class="form-control" required></br>
 							</div>
 						<div class="form-group">
 							<label for="name" class="label">Enter current Password</label>
@@ -137,12 +142,12 @@ $aut=$con->query($ut);
 							<label for="name" class="label">Enter New Password</label>
                             <input id="name" type="text"  name="n_pass" class="form-control"></br>
 							</div>
-							<p style="color:red;"><?php
-									   if(isset($_SESSION['perr']))
+							<p style="color:red;"><%
+									   if(session.getAttribute("perr") != null)
 									   {
-										echo $_SESSION['perr'];
-									    session_destroy();
-										}?>
+										out.print(session.getAttribute("perr"));
+									    session.invalidate();
+										}%>
 								</p>
                             <div class="login-form-button">
                                 <input type="submit" name="edit" value="Save Changes" class="btn btn-success">
