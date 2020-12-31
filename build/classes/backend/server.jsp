@@ -23,7 +23,7 @@ else
 	String e = request.getParameter("email");
 	String m = request.getParameter("mobileno");
 	String ep = request.getParameter("password");
-	ps = con.prepareStatement("SELECT * FROM users WHERE username='?'");
+	ps = con.prepareStatement("SELECT * FROM users WHERE username=?");
 	ps.setString(1, u);
 	java.sql.ResultSet rs = ps.executeQuery();
 	if(rs.next())
@@ -34,7 +34,7 @@ else
 	}
 	else
 	{
-	ps = con.prepareStatement("insert into users(name,username,email,mobileno,password) values('?','?','?','?','?')");
+	ps = con.prepareStatement("insert into users(name,username,email,mobileno,password) values(?,?,?,?,?)");
 	ps.setString(1, n);
 	ps.setString(2, u);
 	ps.setString(3, e);
@@ -43,7 +43,7 @@ else
 	int status = ps.executeUpdate();
 	if(status>0)
 	{
-		ps = con.prepareStatement("insert into login_details(username,password) values('?','?')");
+		ps = con.prepareStatement("insert into login_details(username,password) values(?,?)");
 		ps.setString(1, u);
 		ps.setString(2, ep);
 		ps.executeUpdate();

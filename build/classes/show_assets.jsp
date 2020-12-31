@@ -1,23 +1,24 @@
-<?php
-include("backend/database_connection.php");
-session_start();
-if(isset($_SESSION['category']))
-{
-$cat=$_SESSION['category'];
-}
-else if(isset($_SESSION['tab']))
-	$cat=$_SESSION['tab'];
-else
-{
-	$cat=$_POST['category'];
-	$_SESSION['category']=$cat;
-}
-$save= "select * from $cat";
-
-$rs= $con->query($save);
-
-
-?>
+<%@ include file = "../backend/database_connection.jsp" %>
+<%
+String cat="hello";
+	if(session.getAttribute("category")!=null)
+	{
+		 cat = (String)session.getAttribute("category");
+	}
+	else if(session.getAttribute("tab")!=null)
+	{
+		cat = (String)session.getAttribute("tab");
+		response.sendRedirect("login.jsp");
+	}
+	else
+	{
+		cat = request.getParameter("category");
+		session.setAttribute("category", cat);
+	}
+	PreparedStatement ps = con.prepareStatement("select * from ?");
+	ps.setString(1, cat);
+	ResultSet rs = ps.executeQuery();
+%>
 
 <html>
 <head>
@@ -38,19 +39,18 @@ $rs= $con->query($save);
 
 </head>
 <body>
-<h1><center>Uploaded Items on <?php echo $cat;?></center></h1>
-<form action="backend/assets_remove.php" method="POST">
+<h1><center>Uploaded Items on <%=cat %></center></h1>
+<form action="backend/assets_remove.jsp" method="POST">
 <div class="container">
 <table class="table">
 <tr><td>Product Id</td><td>Category</td><td>Url</td><td>Image</td><td>Name</td><td>Price</td><td>Size</td><td>Description</td><td>Select</td></tr>
-<?php while($rw=$rs->fetch_array()) {
-	?>
-<tr><td><?php echo $rw[0];?></td><td><?php echo $rw[6];?></td><td><?php echo $rw[1];?></td><td><img src="<?php echo $rw[1];?>" height="200px" width="200px"></img></td><td><?php echo $rw[2];?></td><td><?php echo $rw[3];?></td><td><?php echo $rw[4];?></td><td><?php echo $rw[5];?></td><td><input type="checkbox" value="<?php echo $rw[0];?>" name="rev[]"></td></tr>
-<?php 
-}?>
+<% while(rs.next()) {%>
+<tr><td><%=rs.getString(1) %></td><td><%=rs.getString(7) %></td><td><%=rs.getString(2) %></td><td><img src="<%=rs.getString(2) %>" height="200px" width="200px"></img></td><td><%=rs.getString(3) %></td><td><%=rs.getString(4) %></td><td><%=rs.getString(5) %></td><td><%=rs.getString(6) %></td><td><input type="checkbox" value="<%=rs.getString(1) %>" name="rev[]"></td></tr>
+<% 
+}%>
 </table>
 </div>
-<center><a href="add_assets.php" class="btn btn-primary">ADD</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="REMOVE" name="remove" class="btn btn-danger">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="admin_update.php" class="btn btn-success">UPDATE</a></center>
+<center><a href="add_assets.jsp" class="btn btn-primary">ADD</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="REMOVE" name="remove" class="btn btn-danger">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="admin_update.jsp" class="btn btn-success">UPDATE</a></center>
 </form>
 
 

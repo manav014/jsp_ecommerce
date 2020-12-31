@@ -1,3 +1,15 @@
+<%@ include file = "../backend/database_connection.jsp" %>
+<%
+String u="hello";
+	if(session.getAttribute("username")!=null)
+	{
+		 u = (String)session.getAttribute("username");
+	}
+	else
+	{
+		response.sendRedirect("login.jsp");
+	}
+%>
 <!--HTML5 DECLARARTION-->
 <!DOCTYPE>
   <html lang="en" dir="ltr">
@@ -23,7 +35,7 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-dark">
 
 
-          <a class="navbar-brand" href="homepage.php"> <img src="assets/k.svg" width="120" height="120" alt=""></a>
+          <a class="navbar-brand" href="homepage.jsp"> <img src="assets/k.svg" width="120" height="120" alt=""></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                   aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -32,7 +44,7 @@
               <ul class="navbar-nav mx-auto">
                   <li class="nav-item active">
 
-                    <h1><strong> <a class="nav-link text-light" href="homepage.php">ExpressDeals <span class="sr-only">(current)</span></a></strong>  </h1>
+                    <h1><strong> <a class="nav-link text-light" href="homepage.jsp">ExpressDeals <span class="sr-only">(current)</span></a></strong>  </h1>
 
                   </li>
 
@@ -40,7 +52,7 @@
 
                <ul class="navbar-nav">
                       <li class="nav-item">
-                          <a class="nav-link" href="<?php if(!isset($_SESSION['username'])){ echo 'login.php';} else if($u=='admin'){ echo 'admin_profile.php';} else{ echo 'profile.php';}?>">
+                          <a class="nav-link" href="<%if(session.getAttribute("username")==null){out.print("login.jsp");}else if(u.equals("admin")){out.print("admin_profile.jsp");}else{out.print("profile.jsp");}%>">
                               <img src="assets/log.png" width="30" height="30"/>
                           </a>
                       </li>
@@ -53,9 +65,9 @@
                               <img src="assets/more.png" width="30" height="30"/>
                           </a>
                           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						  <a class="dropdown-item" href="my_orders.php">My Orders</a>
-						   <a class="dropdown-item" href="my_transactions.php">My Transactions</a>
-                            <a class="dropdown-item" href="backend/logout.php">Logout</a>
+						  <a class="dropdown-item" href="my_orders.jsp">My Orders</a>
+						   <a class="dropdown-item" href="my_transactions.jsp">My Transactions</a>
+                            <a class="dropdown-item" href="backend/logout.jsp">Logout</a>
 
                       </li>
 
@@ -66,7 +78,7 @@
 
 
                       <li class="nav-item">
-                          <a class="nav-link" href="cart.php">
+                          <a class="nav-link" href="cart.jsp">
                               <img src="assets/shopping-cart.png" width="30" height="30"/>
                           </a>
                       </li>
@@ -82,37 +94,31 @@
 
 
     <nav class="navbar navbar-light bg-dark justify-content-between ">
-      <a class="navbar-brand mx-auto text-light" href="homepage.php"><b>Home</b></a>
-    <a class="navbar-brand mx-auto text-light" href="menwear.php"><b>Men's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="womenwear.php"><b>Women's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="kidswear.php"><b>Kid's Wear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="menfootwear.php"><b>Men's FootWear</b></a>
-      <a class="navbar-brand mx-auto text-light" href="womenfootwear.php"><b>Women's FootWear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="homepage.jsp"><b>Home</b></a>
+    <a class="navbar-brand mx-auto text-light" href="menwear.jsp"><b>Men's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="womenwear.jsp"><b>Women's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="kidswear.jsp"><b>Kid's Wear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="menfootwear.jsp"><b>Men's FootWear</b></a>
+      <a class="navbar-brand mx-auto text-light" href="womenfootwear.jsp"><b>Women's FootWear</b></a>
 
     </nav>
 	<div class="container">
 
 
-<?php
+<%
+	PreparedStatement ps = con.prepareStatement("SELECT * from address where username = ?");
+	ps.setString(1, u);
+	ResultSet rs = ps.executeQuery();
+%>
 
-session_start();
-if(!isset($_SESSION["username"])) 
-	header("location:login.php");
-else {
-	$u = $_SESSION["username"];
-	include("backend/database_connection.php");
-	$res = $con->query("SELECT * from address where username = '$u'");
-
-?>
-
-	<form action="backend/proceed_to_payment.php" method="POST" id="proceed">
+	<form action="backend/proceed_to_payment.jsp" method="POST" id="proceed">
 		<!-- Not a waste Form, Do not delete this. -->
 		<!-- Its Elements are below in the code using form attribute -->
 	</form>
 
-<?php
-	if(mysqli_num_rows($res) > 0) {
-?>
+<%
+	if(rs.next()) {
+%>
 
 	<!-- <div class="right-panel">  -->
 			<br>
@@ -121,47 +127,42 @@ else {
 	  		</div>
 			<!-- <p align="center"> Your previously saved addresses are: </p>-->
 			
-<?php		
-		while($adr = mysqli_fetch_array($res)) {	
-?>
+
 
 			<!-- This prints the saved addresses if available -->
 			<div class="alert alert-dark" role="alert" style="margin-top: 30px">	
 			
-			<input type="radio" value="<?php echo $adr[0]; ?>" name="address" form="proceed" required>
+			<input type="radio" value="<%=rs.getString(1) %>" name="address" form="proceed" required>
 				<table>
 				<div class="text-center">
-					<tr><td>Name: </td><td><?php echo $adr[2]; ?>   </td></tr>
-					<tr><td>Mobile: </td><td><?php echo $adr[3]; ?></td></tr>
-					<tr><td>Pincode: </td><td><?php echo $adr[4]; ?></td></tr>
-					<tr><td>Locality: </td><td><?php echo $adr[5]; ?></td></tr>
-					<tr><td>Address: </td><td><?php echo $adr[6]; ?></td></tr>
-					<tr><td>City: </td><td><?php echo $adr[7]; ?></td></tr>
-					<tr><td>State: </td><td><?php echo $adr[8]; ?></td></tr>
+					<tr><td>Name: </td><td><%=rs.getString(3) %>   </td></tr>
+					<tr><td>Mobile: </td><td><%=rs.getString(4) %></td></tr>
+					<tr><td>Pincode: </td><td><%=rs.getString(5) %></td></tr>
+					<tr><td>Locality: </td><td><%=rs.getString(6) %></td></tr>
+					<tr><td>Address: </td><td><%=rs.getString(7) %></td></tr>
+					<tr><td>City: </td><td><%=rs.getString(8) %></td></tr>
+					<tr><td>State: </td><td><%=rs.getString(9) %></td></tr>
 		</div>
 				</table>
-			<form action="backend/remove_address.php" method="POST">
+			<form action="backend/remove_address.jsp" method="POST">
 			<div class="text-right">
-			<button class="btn btn-dark" type="submit" value="<?php echo $adr[0]; ?>" name="remove"> remove </button>
+			<button class="btn btn-dark" type="submit" value="<%=rs.getString(1) %>" name="remove"> remove </button>
 		</div>
 			   </form>
 		</div>
 		
 			
 
-<?php 		
-		}	
-?>
 		<!-- </div> -->
-<?php
+<%
 	}
-?>
+%>
 
 	<div class="alert alert-dark" role="alert" style="margin-top: 20px">
 	<b><p align="center" style="font-size:30px;">Add Address</p></b>
 	<div class="row">	
 	<div class="col-sm-6 mx-auto" style="margin-top: 35px">
-		<form action="backend/add_address.php" method="POST">
+		<form action="backend/add_address.jsp" method="POST">
 		
 
 
@@ -269,9 +270,3 @@ Your kids deserve only the best. From bodysuits, booties to strollers. When it c
        </div>
 </div>
 
-
-
-	
-<?php
-}
-?>

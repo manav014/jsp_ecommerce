@@ -35,8 +35,8 @@ else
 	rs = ps.executeQuery();
 	while(rs.next())
 	{
-		String pid = (String)rs.getString(2);
-		String quantity = rs.getString(3);
+		String pid = (String)rs.getString(3);
+		String quantity = rs.getString(4);
 		ps = con.prepareStatement("INSERT into orders_log(username, productId, quantity, date) values(?, ?, ?, ?)");
 		ps.setString(1, u);
 		ps.setString(2, pid);

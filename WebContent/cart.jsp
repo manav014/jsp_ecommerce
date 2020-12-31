@@ -127,7 +127,7 @@ int count=0;
 while(rs.next())
 {
 	count=1;
-	String pid = rs.getString(2);
+	String pid = rs.getString(3);
 	String temp = " "+ pid;
 	String table="";
 	if(temp.contains("ww"))
@@ -151,10 +151,10 @@ while(rs.next())
 
 
 					<table>
-						<tr> <td rowspan="4"> <img src = "<%= rs1.getString(1)%>" alt="product image" height="200px" width="200px"> </td> <td> <%= rs1.getString(2)%> </td> </tr>
-						<tr> 																											   <td> Size: <%= rs1.getString(4)%></td> </tr>
-						<tr>																				  						  	   <td> Quantity: <%= rs.getString(3)%> </td> </tr>
-						<tr> 																				   						 	   <td> Total Price: <% grand_total_price += rs.getInt(4); out.print(rs.getInt(4)); %> </td> </tr>
+						<tr> <td rowspan="4"> <img src = "<%= rs1.getString(1)%>" alt="product image" height="200px" width="200px"> </td> <td> <%= rs1.getString(3)%> </td> </tr>
+						<tr> 																											   <td> Size: <%= rs1.getString(5)%></td> </tr>
+						<tr>																				  						  	   <td> Quantity: <%= rs.getString(4)%> </td> </tr>
+						<tr> 																				   						 	   <td> Total Price: <% grand_total_price += rs.getInt(5); out.print(rs.getInt(5)); %> </td> </tr>
 					</table>
 					<div class="text-right">
 				<form action="backend/remove_from_cart.jsp" method="POST">
